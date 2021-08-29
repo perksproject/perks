@@ -15,6 +15,7 @@ export default function IndexPage() {
   const [email, setEmail] = useState('')
   const [phone, setPhone] = useState('')
   const [referal, setReferal] = useState('')
+  const [tokenOTP, setTokenOTP] = useState('')
 
   const _sendMagicLink = async () => {
     console.log('email', email)
@@ -22,9 +23,7 @@ export default function IndexPage() {
       email
     })
 
-    console.log('user', user)
-    console.log('session', session)
-    console.log('error', error)
+    console.log(user, session, error)
   }
 
   const _sendSms = async () => {
@@ -34,7 +33,16 @@ export default function IndexPage() {
       phone: `+52${phone}`
     })
 
-    console.log(error)
+    console.log(user, session, error)
+  }
+
+  const _verifyOTP = async () => {
+    const { user, session, error } = await supabase.auth.verifyOTP({
+      phone: `+52${phone}`,
+      token: tokenOTP
+    })
+
+    console.log(user, session, error)
   }
 
   return (
@@ -196,6 +204,105 @@ export default function IndexPage() {
                   </svg>
                   Enviar {!enabled ? 'Magic Link' : 'SMS'}
                 </button>
+              </div>
+              <div class='bg-white h-64 py-3 rounded text-center'>
+                <div class='flex flex-col mt-4'>
+                  {' '}
+                  <span>El SMS se envió al número</span> <span class='font-bold'>+52 {phone}</span>{' '}
+                </div>
+                <div id='otp' class='flex flex-row justify-center text-center px-2 mt-5'>
+                  {' '}
+                  {/* <input
+                    class='m-2 border-gray-300 h-10 w-10 text-center form-control rounded-md'
+                    type='text'
+                    id='first'
+                    maxlength='1'
+                  />{' '}
+                  <input
+                    class='m-2 border-gray-300 h-10 w-10 text-center form-control rounded-md'
+                    type='text'
+                    id='second'
+                    maxlength='1'
+                  />{' '}
+                  <input
+                    class='m-2 border-gray-300 h-10 w-10 text-center form-control rounded-md'
+                    type='text'
+                    id='third'
+                    maxlength='1'
+                  />{' '}
+                  <input
+                    class='m-2 border-gray-300 h-10 w-10 text-center form-control rounded-md'
+                    type='text'
+                    id='fourth'
+                    maxlength='1'
+                  />{' '}
+                  <input
+                    class='m-2 border-gray-300 h-10 w-10 text-center form-control rounded-md'
+                    type='text'
+                    id='fifth'
+                    maxlength='1'
+                  />{' '}
+                  <input
+                    class='m-2 border-gray-300 h-10 w-10 text-center form-control rounded'
+                    type='text'
+                    id='sixth'
+                    maxlength='1'
+                  />{' '} */}
+                  <div className='w-80'>
+                    <label htmlFor='email' className='block text-sm font-medium text-gray-700'>
+                      Verificar
+                    </label>
+                    <div className='mt-1 relative rounded-md shadow-sm'>
+                      <input
+                        type='text'
+                        name='tokenotp'
+                        id='tokenotp'
+                        value={tokenOTP}
+                        onChange={e => setTokenOTP(e.target.value)}
+                        className='focus:ring-indigo-500 focus:border-indigo-500 block w-full pl-10 sm:text-sm border-gray-300 rounded-md'
+                        placeholder='123456'
+                      />
+                    </div>
+                  </div>
+                </div>
+                <div class='flex justify-center text-center mt-5'>
+                  <button
+                    onClick={_verifyOTP}
+                    className='w-full flex justify-center mt-3 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                    <svg className='h-5 w-5 mr-3' viewBox='0 0 20 20' fill='white' xmlns='http://www.w3.org/2000/svg'>
+                      <g clipPath='url(#clip0)'>
+                        <path
+                          d='M14.7261 3.72114C14.749 3.56508 14.7282 3.4057 14.6657 3.26083C14.6033 3.11596 14.5018 2.99132 14.3726 2.90084C14.2434 2.81036 14.0916 2.75762 13.9341 2.74851C13.7766 2.7394 13.6197 2.77429 13.4809 2.84927L1.77939 9.18548C1.63426 9.26401 1.51512 9.38309 1.4365 9.52817C1.35789 9.67326 1.3232 9.83809 1.33667 10.0026C1.35014 10.167 1.41118 10.324 1.51235 10.4544C1.61352 10.5848 1.75044 10.6829 1.90642 10.7367L6.08522 12.1797C6.2599 12.24 6.44946 12.2417 6.6252 12.1846C6.80094 12.1275 6.9533 12.0147 7.0592 11.8633L9.28813 8.68006C9.41745 8.49536 9.61485 8.3696 9.8369 8.33045C10.0589 8.2913 10.2875 8.34195 10.4721 8.47128C10.6568 8.60061 10.7826 8.798 10.8218 9.02005C10.8609 9.2421 10.8102 9.47061 10.6809 9.6553L8.452 12.8385C8.34593 12.9898 8.29204 13.1716 8.2985 13.3563C8.30496 13.5409 8.37141 13.7185 8.48779 13.862L11.2735 17.2946C11.3773 17.4228 11.5163 17.5179 11.6733 17.5685C11.8304 17.6191 11.9987 17.6229 12.1579 17.5794C12.3171 17.536 12.4602 17.4471 12.5697 17.3237C12.6792 17.2003 12.7505 17.0478 12.7748 16.8846L14.7268 3.72163L14.7261 3.72114Z'
+                          fill='white'
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id='clip0'>
+                          <rect width='20' height='20' fill='white' />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    Verificar
+                  </button>
+                  <button
+                    onClick={_sendSms}
+                    className='w-full flex justify-center mt-3 py-2 px-4 border border-transparent rounded-md shadow-sm text-sm font-medium text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500'>
+                    <svg className='h-5 w-5 mr-3' viewBox='0 0 20 20' fill='white' xmlns='http://www.w3.org/2000/svg'>
+                      <g clipPath='url(#clip0)'>
+                        <path
+                          d='M14.7261 3.72114C14.749 3.56508 14.7282 3.4057 14.6657 3.26083C14.6033 3.11596 14.5018 2.99132 14.3726 2.90084C14.2434 2.81036 14.0916 2.75762 13.9341 2.74851C13.7766 2.7394 13.6197 2.77429 13.4809 2.84927L1.77939 9.18548C1.63426 9.26401 1.51512 9.38309 1.4365 9.52817C1.35789 9.67326 1.3232 9.83809 1.33667 10.0026C1.35014 10.167 1.41118 10.324 1.51235 10.4544C1.61352 10.5848 1.75044 10.6829 1.90642 10.7367L6.08522 12.1797C6.2599 12.24 6.44946 12.2417 6.6252 12.1846C6.80094 12.1275 6.9533 12.0147 7.0592 11.8633L9.28813 8.68006C9.41745 8.49536 9.61485 8.3696 9.8369 8.33045C10.0589 8.2913 10.2875 8.34195 10.4721 8.47128C10.6568 8.60061 10.7826 8.798 10.8218 9.02005C10.8609 9.2421 10.8102 9.47061 10.6809 9.6553L8.452 12.8385C8.34593 12.9898 8.29204 13.1716 8.2985 13.3563C8.30496 13.5409 8.37141 13.7185 8.48779 13.862L11.2735 17.2946C11.3773 17.4228 11.5163 17.5179 11.6733 17.5685C11.8304 17.6191 11.9987 17.6229 12.1579 17.5794C12.3171 17.536 12.4602 17.4471 12.5697 17.3237C12.6792 17.2003 12.7505 17.0478 12.7748 16.8846L14.7268 3.72163L14.7261 3.72114Z'
+                          fill='white'
+                        />
+                      </g>
+                      <defs>
+                        <clipPath id='clip0'>
+                          <rect width='20' height='20' fill='white' />
+                        </clipPath>
+                      </defs>
+                    </svg>
+                    Reenviar SMS
+                  </button>
+                </div>
               </div>
             </div>
           </div>
