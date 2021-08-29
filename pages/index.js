@@ -17,6 +17,8 @@ export default function IndexPage() {
   const [referal, setReferal] = useState('')
   const [tokenOTP, setTokenOTP] = useState('')
 
+  console.log(user)
+
   const _sendMagicLink = async () => {
     console.log('email', email)
     const { user, session, error } = await supabase.auth.signIn({
@@ -37,6 +39,7 @@ export default function IndexPage() {
   }
 
   const _verifyOTP = async () => {
+    console.log(phone, tokenOTP)
     const { user, session, error } = await supabase.auth.verifyOTP({
       phone: `+52${phone}`,
       token: tokenOTP
